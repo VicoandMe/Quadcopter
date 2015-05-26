@@ -190,8 +190,8 @@ void Bluetooth_Update() {
   } else {
     switch (select) {
       case 's':
-      Motor_Start();
-      Serial.println('1');
+        Motor_Start();
+        Serial.println('1');
       break;
     }
     wait_for_data = false;

@@ -122,7 +122,7 @@ double getpid(double ain, int kcnt, int index, int time) {
           }\
     }\
     for (i = 0; i < 3; i++) {\
-	speed_ypr[i] = getpid(yprsp[i+3], 1, i+3,cycleTime+1);\
+      speed_ypr[i] = getpid(yprsp[i+3], 1, i+3,cycleTime+1);\
     }\
     loopcnt = loopcnt-1;\
     motorSpeed[FRONT] = throttle + speed_ypr[1]+motorSpeed_error[FRONT]-speed_ypr[0];\
@@ -156,6 +156,7 @@ void Bluetooth_Loop() {
                                    f_tar[0] = ypr[0];
 				   break;
                           case 'S':c = Serial.read();
+                                   takeOff[1] = true;
                                    pre_hello_time = millis();
 			           break;
                           case 'q':
@@ -199,12 +200,12 @@ void Bluetooth_Loop() {
 
 
 void loop(){
-  if(!takeOff[1] && !takeOff[0]) {
-    digitalWrite(LED_PIN,HIGH);
-  }
-  else if(!takeOff[0] && Motor_flag){
-    digitalWrite(LED_PIN, LOW);
-  }
+  //if(!takeOff[1] && !takeOff[0]) {
+  //  digitalWrite(LED_PIN,HIGH);
+ // }
+ // else if(!takeOff[0] && Motor_flag){
+ //   digitalWrite(LED_PIN, LOW);
+ // }
   takeOff[0] = takeOff[1];
 
   if (loopCount) {
@@ -215,25 +216,25 @@ void loop(){
     Bluetooth_Show();
   }
 	//     {1.2} upper monitor update data or detect symbol of periodic "saying hello"
-  if (Serial.available() > 0){
-	while(Serial.peek() == 'S'){
-            pre_hello_time = millis();
-	    Serial.read();
-            takeOff[1] = true;
-        }
-   }
+//  if (Serial.available() > 0){
+//	while(Serial.peek() == 'S'){
+//            pre_hello_time = millis();
+//	    Serial.read();
+//            takeOff[1] = true;
+//        }
+//   }
 	//if having not receive any data for more than 1 sec, then lock.
 	//the time variable must be unsigned. This can solve the overflow problem
-   else if ((uint16_t)millis() - pre_hello_time > 2000) {
-	  takeOff[1] = false;
-          Motor_Stop();
-   }
+   //else if ((uint16_t)millis() - pre_hello_time > 4000) {
+   //	  takeOff[1] = false;
+   //       Motor_Stop();
+   //}
 
   MPU_Loop();
-  if(abs(ypr[1]) > 0.8 || abs(ypr[2]) > 0.8) {
-    takeOff[1] = false;
-    Motor_Stop();
-  }
+  //if(abs(ypr[1]) > 0.8 || abs(ypr[2]) > 0.8) {
+  //  takeOff[1] = false;
+  //  Motor_Stop();
+  //}
   PID();
 
   if(Motor_flag){
