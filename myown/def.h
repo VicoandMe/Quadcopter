@@ -47,10 +47,10 @@
 
 
 //Define the pin number of motots
-#define MOTOR_PIN_0 3
-#define MOTOR_PIN_1 9
-#define MOTOR_PIN_2 10
-#define MOTOR_PIN_3 11
+#define MOTOR_PIN_0 10
+#define MOTOR_PIN_1 11
+#define MOTOR_PIN_2 3
+#define MOTOR_PIN_3 9
 
 #define FRONT 0
 #define RIGHT 1

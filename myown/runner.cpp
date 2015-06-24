@@ -49,7 +49,7 @@ uint16_t previousTime = 0;
 uint16_t cycleTime = 0;
 uint16_t cycleTimefirst = 0;
 uint16_t cycleTimesecond = 0;
-#define PIDLOOP 4
+#define PIDLOOP 2
 
 #define initData(){\
                 uint8_t axis;\
@@ -88,8 +88,7 @@ void setup() {
 
 double getpid(double ain, int kcnt, int index, int time) {
 	double e = f_tar[index]-ain;
-	sum_e[index] = sum_e[index]+e;
-	double result = kp[kcnt]*e+ki[kcnt]*(sum_e[index])+kd[kcnt]*(e-last_e[index])/time;
+	double result = kp[kcnt]*e+kd[kcnt]*(e-last_e[index])/time;
 	last_e[index] = e;
 	return result;
 }
@@ -113,22 +112,28 @@ double getpid(double ain, int kcnt, int index, int time) {
     cycleTimefirst = millis();\
     cycleTime = cycleTimefirst-cycleTimesecond;\
     int i;\
-    if (loopcnt == 0) {\
+    if(cycleTime != 0) {\
+    if (1) {\
 	loopcnt = PIDLOOP;\
         for (i = 0; i < 3; i++) {\
-          f_tar[i+3] = getpid(ypr[i], 0, i,cycleTime*4 + 1);\
-          sum_e[i+3] = 0;\
-          last_e[i+3] = 0;\
+          f_tar[i+3] = getpid(ypr[i], 0, i,cycleTime + 1);\  
           }\
     }\
+    yprsp[3] += 3;\
+    yprsp[4] -= 2;\
+    yprsp[5] -= 3;\
+    yprsp[3] -= 3;\
+    yprsp[4] += 2;\
+    yprsp[5] += 3;\
     for (i = 0; i < 3; i++) {\
-      speed_ypr[i] = getpid(yprsp[i+3], 1, i+3,cycleTime+1);\
+      speed_ypr[i] = getpid(yprsp[i+3], 1, i+3,cycleTime+1)/5;\
     }\
     loopcnt = loopcnt-1;\
     motorSpeed[FRONT] = throttle + speed_ypr[1]+motorSpeed_error[FRONT]-speed_ypr[0];\
     motorSpeed[BACK] = throttle - speed_ypr[1]+motorSpeed_error[BACK]-speed_ypr[0];\
     motorSpeed[LEFT] = throttle + speed_ypr[2]+motorSpeed_error[LEFT]+speed_ypr[0];\
     motorSpeed[RIGHT] = throttle - speed_ypr[2]+motorSpeed_error[RIGHT]+speed_ypr[0];\
+    }\
     cycleTimesecond = cycleTimefirst;\
 }
 
@@ -140,13 +145,6 @@ void Bluetooth_Loop() {
 		digitalWrite(13, LOW);
 
 		//          {1.3.3} show the state of data for debug
-		if (loopCount) {
-			loopCount --;
-		} else {
-			loopCount = 5;
-			Bluetooth_Show();
-		}
-
 		//          {1.3.4} detect whether the LOCK state is changed
 		while (Serial.available()) {
   			char c = Serial.peek();
@@ -213,22 +211,9 @@ void loop(){
   } else {
     loopCount = 5;
     Bluetooth_Loop();
-    Bluetooth_Show();
-  }
-	//     {1.2} upper monitor update data or detect symbol of periodic "saying hello"
-//  if (Serial.available() > 0){
-//	while(Serial.peek() == 'S'){
-//            pre_hello_time = millis();
-//	    Serial.read();
-//            takeOff[1] = true;
-//        }
-//   }
-	//if having not receive any data for more than 1 sec, then lock.
-	//the time variable must be unsigned. This can solve the overflow problem
-   //else if ((uint16_t)millis() - pre_hello_time > 4000) {
-   //	  takeOff[1] = false;
-   //       Motor_Stop();
-   //}
+    Bluetooth_Show();  
+ }
+
 
   MPU_Loop();
   //if(abs(ypr[1]) > 0.8 || abs(ypr[2]) > 0.8) {

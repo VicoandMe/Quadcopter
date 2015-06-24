@@ -48,7 +48,7 @@ void Bluetooth_Show() {
   Serial.print(throttle); 
   Serial.print('%');
   for (int i = 0; i < 3; i++) {
-    Serial.print(speed_ypr[i]);
+    Serial.print(yprsp[3+i]);
     if (i != 2)
       Serial.print(' ');
   }

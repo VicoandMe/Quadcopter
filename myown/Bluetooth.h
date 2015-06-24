@@ -27,6 +27,7 @@ extern bool Motor_flag;
 extern float ypr[3];
 extern float err_ypr[3];
 extern float speed_ypr[3];
+extern int16_t yprsp[6];
 extern uint8_t motorSpeed[4];
 extern uint8_t motorPins[4];
 extern double kp[2];
