@@ -122,9 +122,6 @@ double getpid(double ain, int kcnt, int index, int time) {
     yprsp[3] += 3;\
     yprsp[4] -= 2;\
     yprsp[5] -= 3;\
-    yprsp[3] -= 3;\
-    yprsp[4] += 2;\
-    yprsp[5] += 3;\
     for (i = 0; i < 3; i++) {\
       speed_ypr[i] = getpid(yprsp[i+3], 1, i+3,cycleTime+1)/5;\
     }\
